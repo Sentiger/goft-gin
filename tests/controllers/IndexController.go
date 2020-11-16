@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/sentiger/goft-gin/goft"
+	"time"
 )
 
 type IndexController struct {
@@ -14,6 +15,7 @@ func NewIndexController() *IndexController {
 
 func (this *IndexController) GetIndex() gin.HandlerFunc {
 	return func(context *gin.Context) {
+		time.Sleep(time.Second*5)
 		context.JSON(200, gin.H{
 			"result": "首页",
 		})
