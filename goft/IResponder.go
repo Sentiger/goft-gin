@@ -10,6 +10,7 @@ var ResponderList []IResponder
 func init() {
 	ResponderList = []IResponder{
 		new(StringResponder),
+		new(ModelResponder),
 	}
 }
 
@@ -36,5 +37,14 @@ type StringResponder func(*gin.Context) string
 func (this StringResponder) RespondTo() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		context.String(200, this(context))
+	}
+}
+
+// 返回一个模型
+type ModelResponder func(*gin.Context) IModel
+
+func (this ModelResponder) RespondTo() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		context.JSON(200, this(context))
 	}
 }

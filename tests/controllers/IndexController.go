@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/sentiger/goft-gin/goft"
+	"github.com/sentiger/goft-gin/tests/models"
 )
 
 type IndexController struct {
@@ -16,8 +17,11 @@ func (this *IndexController) GetIndex(ctx *gin.Context) string {
 	return "Hello goft-gin"
 }
 
-func (this *IndexController) InfoIndex(ctx *gin.Context) string {
-	return "Hello goft-gin info"
+func (this *IndexController) InfoIndex(ctx *gin.Context) goft.IModel {
+	return &models.UserModel{
+		Uid:      1,
+		Username: "张三",
+	}
 }
 
 func (this *IndexController) Build(goft *goft.Goft) {
