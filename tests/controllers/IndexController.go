@@ -18,6 +18,7 @@ func (this *IndexController) GetIndex(ctx *gin.Context) string {
 }
 
 func (this *IndexController) InfoIndex(ctx *gin.Context) goft.IModel {
+	panic("强行异常")
 	return &models.UserModel{
 		Uid:      1,
 		Username: "张三",

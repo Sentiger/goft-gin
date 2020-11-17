@@ -6,15 +6,31 @@ import (
 
 type Goft struct {
 	*gin.Engine
-	g *gin.RouterGroup
+	g         *gin.RouterGroup
+	registers []interface{}
 }
 
 // 初始化
 func Ignite() *Goft {
 	g := &Goft{
-		Engine: gin.New(),
+		Engine:    gin.New(),
+		registers: make([]interface{}, 1),
 	}
 	return g
+}
+
+// 注册类
+func (goft *Goft) register(class interface{}) {
+	goft.registers = append(goft.registers, class)
+}
+
+func (goft *Goft) RegisterExceptionHandler(exceptionHandler IExceptionHandler) *Goft {
+	defaultExceptionHandler := NewExceptionHandler()
+	if exceptionHandler == nil {
+		exceptionHandler = defaultExceptionHandler
+	}
+	goft.Use(defaultExceptionHandler.HandlerFunc(exceptionHandler))
+	return goft
 }
 
 // 重写gin.Handle方法，这里可以直接加载group，省略在控制器中还要加这个参数
