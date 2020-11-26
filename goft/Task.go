@@ -12,15 +12,16 @@ func init() {
 	chList := getTaskList()
 	go func() {
 		for t := range chList {
-			t.Exec()
+			doTask(t)
 		}
 	}()
 }
 
 // 任务执行器
 type TaskExecutor struct {
-	f      TaskFunc
-	params []interface{}
+	f        TaskFunc
+	params   []interface{}
+	callback func()
 }
 
 // 执行器
@@ -28,11 +29,24 @@ func (this *TaskExecutor) Exec() {
 	this.f(this.params...)
 }
 
+// 开启协程进行处理。这里是web程序，后面看情况改成协程池
+func doTask(t *TaskExecutor) {
+	go func() {
+		defer func() {
+			if t.callback != nil {
+				t.callback()
+			}
+		}()
+		t.Exec()
+	}()
+}
+
 // 实力恶化一个构造器
-func NewTaskExecutor(f TaskFunc, params []interface{}) *TaskExecutor {
+func NewTaskExecutor(f TaskFunc, params []interface{}, callback func()) *TaskExecutor {
 	return &TaskExecutor{
-		f:      f,
-		params: params,
+		f:        f,
+		params:   params,
+		callback: callback,
 	}
 }
 
@@ -45,11 +59,11 @@ func getTaskList() chan *TaskExecutor {
 }
 
 // 添加一个任务
-func Task(f TaskFunc, params ...interface{}) {
+func Task(f TaskFunc, callback func(), params ...interface{}) {
 	if f == nil {
 		return
 	}
 	go func() {
-		getTaskList() <- NewTaskExecutor(f, params)
+		getTaskList() <- NewTaskExecutor(f, params, callback)
 	}()
 }

@@ -17,13 +17,13 @@ func NewIndexController() *IndexController {
 
 func (this *IndexController) GetIndex(ctx *gin.Context) string {
 	// 任务处理
-	goft.Task(this.UpdateViews, 1)
+	goft.Task(func(params ...interface{}) {
+		time.Sleep(time.Second * 5)
+		fmt.Println("我是延迟任务执行", params)
+	}, func() {
+		fmt.Println("我是执行回调函数")
+	}, 1)
 	return "Hello goft-gin"
-}
-
-func (this *IndexController) UpdateViews(params ...interface{}) {
-	time.Sleep(time.Second * 10)
-	fmt.Println("我是延迟任务执行")
 }
 
 func (this *IndexController) InfoIndex(ctx *gin.Context) goft.IModel {
