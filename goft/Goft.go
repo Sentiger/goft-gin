@@ -3,6 +3,7 @@ package goft
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 type Goft struct {
@@ -70,8 +71,19 @@ func (goft *Goft) Mount(group string, controllers ...IController) *Goft {
 	return goft
 }
 
+// todo 这里要将任务进行接口规范定义，写入专门的任务文件中
+// 定时任务 0/3 * * * * *
+func (goft *Goft) Task(expr string, f func()) *Goft {
+	_, err := getCronTask().AddFunc(expr, f)
+	if err != nil {
+		log.Println(err)
+	}
+	return goft
+}
+
 // 启动程序
 func (goft *Goft) Launch() {
 	config := InitConfig()
+	getCronTask().Start()
 	goft.Run(fmt.Sprintf(":%d", config.Server.Port))
 }
