@@ -1,6 +1,7 @@
 package goft
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -71,5 +72,6 @@ func (goft *Goft) Mount(group string, controllers ...IController) *Goft {
 
 // 启动程序
 func (goft *Goft) Launch() {
-	goft.Run(":8081")
+	config := InitConfig()
+	goft.Run(fmt.Sprintf(":%d", config.Server.Port))
 }
